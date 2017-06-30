@@ -71,9 +71,10 @@ open class CaptureSessionManager: NSObject, AVCapturePhotoCaptureDelegate {
         }
     }
 
-    
+    fileprivate var captureCompletion:((_ error:Error?)->Void)!
     /// 画像取得
-    public func takePhoto(){
+    public func takePhoto( complition:@escaping ((_ error:Error?)->Void) ){
+        captureCompletion = complition
         let capturePhotoSettings = AVCapturePhotoSettings()
         if capturePhotoOutput.supportedFlashModes.contains(NSNumber(value: AVCaptureFlashMode.auto.rawValue)) {
             capturePhotoSettings.flashMode = .auto
@@ -89,6 +90,11 @@ open class CaptureSessionManager: NSObject, AVCapturePhotoCaptureDelegate {
                  previewPhotoSampleBuffer: CMSampleBuffer?,
                  resolvedSettings: AVCaptureResolvedPhotoSettings,
                  bracketSettings: AVCaptureBracketedStillImageSettings?, error: Error?) {
+        //
+        if let error = error {
+            captureCompletion(error)
+        }
+        
         // do something
         let photoData = AVCapturePhotoOutput.jpegPhotoDataRepresentation(forJPEGSampleBuffer: photoSampleBuffer!, previewPhotoSampleBuffer: previewPhotoSampleBuffer)
         let image = UIImage(data: photoData!)
@@ -97,10 +103,8 @@ open class CaptureSessionManager: NSObject, AVCapturePhotoCaptureDelegate {
             let aspectFillingImage = image.aspectFillingImage(to: captureFrame.size)
             let umeData = dataSource.umeImageData()
             let compositImage = aspectFillingImage?.composit(image: umeData.image, rect: umeData.rect)
-            
-            
-            
             UIImageWriteToSavedPhotosAlbum(compositImage!, nil, nil, nil)
+            captureCompletion(nil)
         }
     }
 }
