@@ -9,10 +9,10 @@
 import UIKit
 import AVFoundation
 
-protocol UmeDataSource: class {
+public protocol UmeDataSource: class {
     func umeImageData() -> (image: UIImage, rect: CGRect)
 }
-final class CaptureSessionManager: NSObject, AVCapturePhotoCaptureDelegate {
+open class CaptureSessionManager: NSObject, AVCapturePhotoCaptureDelegate {
     // MARK: - public properties
     static let shared:CaptureSessionManager = CaptureSessionManager()
     var previewLayer:AVCaptureVideoPreviewLayer?
@@ -33,7 +33,7 @@ final class CaptureSessionManager: NSObject, AVCapturePhotoCaptureDelegate {
     /// 権限チェック
     ///
     /// - Returns: 許可=ture / それ以外=false
-    func checkAuthority() -> (Bool) {
+    public func checkAuthority() -> (Bool) {
         let status = AVCaptureDevice.authorizationStatus(forMediaType: AVMediaTypeVideo)
         if status == .authorized {
             return true
@@ -45,7 +45,7 @@ final class CaptureSessionManager: NSObject, AVCapturePhotoCaptureDelegate {
     /// 初期化を行う
     ///
     /// - Parameter frame: キャプチャするフレーム
-    func setup(frame:CGRect) {
+    public func setup(frame:CGRect) {
         guard let devices = AVCaptureDeviceDiscoverySession(deviceTypes: [.builtInWideAngleCamera], mediaType: AVMediaTypeVideo, position: .back).devices else {
             return
         }
@@ -73,7 +73,7 @@ final class CaptureSessionManager: NSObject, AVCapturePhotoCaptureDelegate {
 
     
     /// 画像取得
-    func takePhoto(){
+    public func takePhoto(){
         let capturePhotoSettings = AVCapturePhotoSettings()
         if capturePhotoOutput.supportedFlashModes.contains(NSNumber(value: AVCaptureFlashMode.auto.rawValue)) {
             capturePhotoSettings.flashMode = .auto
@@ -84,7 +84,7 @@ final class CaptureSessionManager: NSObject, AVCapturePhotoCaptureDelegate {
         capturePhotoOutput?.capturePhoto(with: capturePhotoSettings, delegate: self)
     }
     
-    func capture(_ captureOutput: AVCapturePhotoOutput,
+    public func capture(_ captureOutput: AVCapturePhotoOutput,
                  didFinishProcessingPhotoSampleBuffer photoSampleBuffer: CMSampleBuffer?,
                  previewPhotoSampleBuffer: CMSampleBuffer?,
                  resolvedSettings: AVCaptureResolvedPhotoSettings,
