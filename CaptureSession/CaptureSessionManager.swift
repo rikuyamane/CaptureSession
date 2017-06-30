@@ -14,15 +14,15 @@ public protocol UmeDataSource: class {
 }
 open class CaptureSessionManager: NSObject, AVCapturePhotoCaptureDelegate {
     // MARK: - public properties
-    static let shared:CaptureSessionManager = CaptureSessionManager()
-    var previewLayer:AVCaptureVideoPreviewLayer?
+    public static let shared:CaptureSessionManager = CaptureSessionManager()
+    public var previewLayer:AVCaptureVideoPreviewLayer?
     
     // MARK: - private properties
     private let captureSession:AVCaptureSession
     private var capturePhotoOutput:AVCapturePhotoOutput!
     private var captureFrame:CGRect!
     
-    weak var dataSource: UmeDataSource?
+    public weak var dataSource: UmeDataSource?
     
     override private init(){
         captureSession = AVCaptureSession()
